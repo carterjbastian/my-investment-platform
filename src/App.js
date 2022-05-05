@@ -31,7 +31,7 @@ function Explanation() {
         seeing the platform as that user (sign in), and getting accredited via
         an integration with
         {' '}
-        <a href="https://www.checkinvestorstatus.com">Check Investor Status</a>
+        <a href="https://www.checkinvestorstatus.com" target="_blank" rel="noreferrer">Check Investor Status</a>
         .
       </p>
       <p className="text-md">
@@ -48,8 +48,11 @@ function StepOne() {
       <strong className="text-2xl font-semibold">
         Step 1: Create a MyInvestmentPlatform User
       </strong>
-      <p className="text-md">
-        Let's start by simulating a "sign up". Enter some dummy information
+      <p className="text-lg">
+        Let's start by simulating a "sign up" on the fictional investment platform.
+      </p>
+      <p className="text-lg font-semibold">
+        Enter some dummy information
         for a new "User" on the MyInvestmentPlatform website.
       </p>
     </div>
@@ -79,13 +82,16 @@ function StepTwo() {
         when we say that MyInvestmentPlatform uses the
         Check Investor Status integration.
       </p>
+      <strong className="font-semibold">
+        Click the "Get Accredited" button and go through the accreditation portal as your fictional user. 
+      </strong>
     </div>
   )
 }
 
 function StepThree() {
   return (
-    <div className="w-3/4 mx-auto flex flex-col gap-4 pb-6">
+    <div className="w-3/4 mx-auto flex flex-col gap-4 pb-6 text-lg">
       <strong className="text-2xl font-semibold">
         Step 3: Fetch Investor Model from CIS
       </strong>
@@ -104,6 +110,9 @@ function StepThree() {
         The "get accredited" button's href
         above will update each time your click the "Fetch" button, and previous links will no longer work.
       </p>
+      <strong className="font-semibold">
+        Click the button and fetch the CIS investor model for your user.
+      </strong>
     </div>
   )
 }
@@ -126,8 +135,18 @@ function WhatsNext() {
       <ul className="ml-10 text-lg">
         <li className="list-disc text-lg">
           <a
+            href="https://platformintegrationdemo.com/docs"
+            className="text-blue-800 hover:underline font-semibold"
+            target="_blank" rel="noreferrer"
+          >
+            Check Investor Status API Documentation
+          </a>
+        </li>
+        <li className="list-disc text-lg">
+          <a
             href="https://github.com/carterjbastian/my-investment-platform"
             className="text-blue-800 hover:underline font-semibold"
+            target="_blank" rel="noreferrer"
           >
             Sample Front-End Repo (the web app code for this demo!)
           </a>
@@ -136,24 +155,17 @@ function WhatsNext() {
           <a
             href="https://github.com/carterjbastian/my-investment-platform-api"
             className="text-blue-800 hover:underline font-semibold"
+            target="_blank" rel="noreferrer"
           >
             Sample Back-End Repo (the web server code for this demo!)
           </a>
         </li>
-        <li className="list-disc text-lg">
-          <a
-            href="https://platformintegrationdemo.com/docs"
-            className="text-blue-800 hover:underline font-semibold"
-          >
-            Check Investor Status API Documentation
-          </a>
-        </li>
       </ul>
-      <p className="text-lg">
-        If you have questions or you're ready to get started using the Check Investor Status
+      <p className="text-lg font-semibold">
+        To get started with the Check Investor Status
         API and integration, email
         {' '}
-        <a className="text-blue-800 hover:underline font-semibold" href="mailto:carter@checkinvestorstatus.com">
+        <a className="text-blue-800 hover:underline font-bold" href="mailto:carter@checkinvestorstatus.com">
           carter@checkinvestorstatus.com
         </a>
         .
@@ -286,7 +298,7 @@ function App() {
         </div>
       </div>
       <div className="w-6/12 flex flex-col gap-4 border border-gray-500 p-10">
-        <strong className="text-xl underline font-semibold mx-auto pb-4">Your user's investor account (from Check Investor Status):</strong>
+        <strong className="text-xl underline font-semibold mx-auto pb-4">Your user's investor model (from Check Investor Status):</strong>
         <code className="bg-slate-200 whitespace-pre p-1">
           { JSON.stringify(ciInvestor || {}, null, 2)}
         </code>

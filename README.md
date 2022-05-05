@@ -1,70 +1,62 @@
-# Getting Started with Create React App
+# Check Investor Status Sample Integration (Front-End)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This codebase implements the front-end for the Check Investor Status platform integration demo.
 
-## Available Scripts
+To implement a live demo of the C.I. platform integration, we create an interface for a fictional investment platform – MyInvestmentPlatform.
 
-In the project directory, you can run:
+**Note: This MyInvestmentPlatform is a generic investment platform. Any time you read "MyInvestmentPlatform", you can substitute in the name of your platform.**
 
-### `npm start`
+Our fictional platform lets users create accounts, store their information, and make investments (potentially with many different sponsors).
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+However, in order to make these investments, MyInvestmentPlatform users need to verify their accreditation status. For this, MyInvestmentPlatform has integrated with Check Investor Status.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+This web app (partially implementing MyInvestmentPlatform) is a fully-functional example of the Check Investor Status platform integration and API.
 
-### `npm test`
+This repo is a live demo – see this live at [platformintegrationdemo.com](https://www.platformintegrationdemo.com/).
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Tech Stack
 
-### `npm run build`
+This front-end demo was spun up with Create React App. It uses react, including webhooks (`useState` and `useEffect`) for structure and data management, and tailwindcss for styling.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Integration Workflow
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+This user facing webapp hits a web server. That web server stores information about the platform's users, and interacts with the Check Investor Status API.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+To integrate, we register our platform's user with Check Investor Status' API (step 1), and then link our user to a `portalLink` – a unique, dynamically-created "magic link" (step 2). When the user clicks this link, they can go through the Check Investor Status accreditation process. As they proceed through the accreditation process, the platform can check in on their progress (step 3).
 
-### `npm run eject`
+You can see this entire process explained in detail in the [C.I. Platform API Documentation](https://www.platformintegrationdemo.com/docs/#integration-example).
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Where to look for examples
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### `src/App.js`
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+This has components and renders the [main page](https://www.platformintegrationdemo.com/).
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+That includes a few instructional dumb components, and one smart component that interacts with the MyInvestmentPlatform API.
 
-## Learn More
+This Component:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- Implements a form to manually create a "MyInvestmentPlatform" user (step 1).
+- Renders the user-facing MIP page inside a browser frame (step 2).
+- Implements a button to fetch the [Investor Model](https://www.platformintegrationdemo.com/docs/#investor-model) for the MyInvestmentPlatform user created above (step 3).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### `src/MyInvestmentPlatformPage.js`
 
-### Code Splitting
+This is the only component separated out into its own file. That's because it's the one most-similar to what you, as a platform, would implement. This user-facing component is an "account" or "onboarding" page instructing the user to get accredited so they can continue with an investment.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+This page implements a functional "get-accredited" button. If the user (or you) click this button, they'll be taken to their own persistent Accreditation portal in another tab with their information pre-populated with the information in their MyInvestmentPlatform account. They can leave and return to this tab at any point.
 
-### Analyzing the Bundle Size
+### `src/api.js`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+This implements the API interactions between this web app and the MyInvestmentPlatfrom web server.
 
-### Making a Progressive Web App
+**Note that this web app doesn't interact directly with the Check Investor Status API. It always goes through the middleman of the MyInvestmentPlatform web server. Otherwise, our Auth secret key would be jeopardized.**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## Further Resources
 
-### Advanced Configuration
+The following are good resources for more information:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- [PlatformIntegrationDemo.com](https://www.platformintegrationdemo.com) is what this looks like (live)!
+- The Check Investor Status [Integration & API Documentation](https://www.platformintegrationdemo.com/docs/) explains the details of the investor model, the endpoints the server hits, and the portalLinks used in this implementation.
+- [MyInvestmentPlatform Web Server Repo](https://github.com/carterjbastian/my-investment-platform-api) implements the demo web server that this platform interacts with.
+- Carter built this, is actively maintaining it, and is providing technical support to our platform clients. Reach out to [carter@checkinvestorstatus.com](mailto:carter@checkinvestorstatus.com) with any questions.
