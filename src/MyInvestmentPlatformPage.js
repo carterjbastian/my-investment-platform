@@ -22,10 +22,31 @@ function MipHeader() {
 
 function MyInvestmentPlatformPage(props) {
   let {
-    userId
+    userId,
+    portalLink: passedInLink, // Let parent override portalLink
   } = props
 
   const [portalLink, setPortalLink] = useState('');
+
+  // Fetch the Portal Link from the API
+  useEffect(() => {
+    async function getPortalFromAPI() {
+      const { 
+        portalLink: newPortalLink, 
+      } = await fetchPortalLink(userId);
+    
+      if (newPortalLink) {
+        setPortalLink(newPortalLink);
+      }
+    }
+
+    if (passedInLink) {
+      setPortalLink(passedInLink)
+    } else {
+      getPortalFromAPI();
+    }
+  }, [userId, passedInLink]);
+
 
   const investmentCol = (
     <div className="flex flex-col w-8/12 ml-8">
@@ -115,20 +136,6 @@ function MyInvestmentPlatformPage(props) {
 
     </div>
   )
-
-  // Fetch the Portal Link from the API
-  useEffect(() => {
-    async function getPortalFromAPI() {
-      const { 
-        portalLink: newPortalLink, 
-      } = await fetchPortalLink(userId);
-    
-      if (newPortalLink) {
-        setPortalLink(newPortalLink);
-      }
-    }
-    getPortalFromAPI();
-  }, [userId]);
 
   // Render the User's MyInvestmentPlatform Page
   return (

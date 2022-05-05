@@ -25,7 +25,19 @@ async function fetchPortalLink(userId) {
   .catch((err) => ({ error: err }));
 }
 
+async function fetchCiInvestor(userId) {
+  return fetch(`${PREFIX}/api/get-ci-investor/${userId}`, {
+    method: 'Get',
+    headers: {
+    'Content-Type': 'application/json',
+    },
+  })
+  .then((data) => data.json())
+  .catch((err) => ({ error: err }));
+}
+
 export {
   createUser,
   fetchPortalLink,
+  fetchCiInvestor,
 };

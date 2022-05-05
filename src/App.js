@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import BrowserFrame from "react-browser-frame";
 
 import MyInvestmentPlatformPage from './MyInvestmentPlatformPage';
@@ -6,7 +6,7 @@ import MyInvestmentPlatformPage from './MyInvestmentPlatformPage';
 
 import {
   createUser,
-  fetchPortalLink
+  fetchCiInvestor,
 } from './api'
 
 function Header() {
@@ -20,7 +20,7 @@ function Header() {
 
 function Explanation() {
   return (
-    <div className="w-3/4 mx-auto flex flex-col py-10 gap-4">
+    <div className="w-3/4 mx-auto flex flex-col py-10 gap-4 text-lg">
       <strong className="text-2xl font-semibold">
         What is this?
       </strong>
@@ -44,7 +44,7 @@ function Explanation() {
 
 function StepOne() {
   return (
-    <div className="w-3/4 mx-auto flex flex-col gap-4">
+    <div className="w-3/4 mx-auto flex flex-col gap-4 pb-6 text-lg">
       <strong className="text-2xl font-semibold">
         Step 1: Create a MyInvestmentPlatform User
       </strong>
@@ -58,7 +58,7 @@ function StepOne() {
 
 function StepTwo() {
   return (
-    <div className="w-3/4 mx-auto flex flex-col gap-4">
+    <div className="w-3/4 mx-auto flex flex-col gap-4 text-lg">
       <strong className="text-2xl font-semibold">
         Step 2: What your User Sees
       </strong>
@@ -83,12 +83,94 @@ function StepTwo() {
   )
 }
 
+function StepThree() {
+  return (
+    <div className="w-3/4 mx-auto flex flex-col gap-4 pb-6">
+      <strong className="text-2xl font-semibold">
+        Step 3: Fetch Investor Model from CIS
+      </strong>
+      <p className="text-md">
+        The "Fetch Investor Model" below hits an endpoint of the MyInvestmentPlatform
+        web server, which in turns gets the Check Investor Status investor representation
+        for your user.
+      </p>
+      <p>
+        If you complete the accreditation process by clicking the &quot;Get Accredited&quot;
+        button in your user's view above (dummy info is fine), you can re-fetch their info
+        and jnkyou&apos;ll see that their status has changed.
+      </p>
+      <p>
+        Notice also that this updates the portalLink for the investor (for security purposes).
+        The "get accredited" button's href
+        above will update each time your click the "Fetch" button, and previous links will no longer work.
+      </p>
+    </div>
+  )
+}
+
+function WhatsNext() {
+  return (
+    <div className="w-3/4 mx-auto flex flex-col gap-4 pb-20">
+      <strong className="text-2xl font-semibold">
+        What&apos;s Next?
+      </strong>
+      <p className="text-lg">
+        That&apos;s the demo! We created a user for a fictional platform, tried to get
+        accredited as that user using the Check Investor Status integration, and pulled
+        in their accreditation data from the CIS API.
+      </p>
+      <p className="text-lg">
+        There&apos;s a lot me we can do with the Check Investor Status platform. To learn 
+        more, check out the following resources:
+      </p>
+      <ul className="ml-10 text-lg">
+        <li className="list-disc text-lg">
+          <a
+            href="https://github.com/carterjbastian/my-investment-platform"
+            className="text-blue-800 hover:underline font-semibold"
+          >
+            Sample Front-End Repo (the web app code for this demo!)
+          </a>
+        </li>
+        <li className="list-disc text-lg">
+          <a
+            href="https://github.com/carterjbastian/my-investment-platform-api"
+            className="text-blue-800 hover:underline font-semibold"
+          >
+            Sample Back-End Repo (the web server code for this demo!)
+          </a>
+        </li>
+        <li className="list-disc text-lg">
+          <a
+            href="https://platformintegrationdemo.com/docs"
+            className="text-blue-800 hover:underline font-semibold"
+          >
+            Check Investor Status API Documentation
+          </a>
+        </li>
+      </ul>
+      <p className="text-lg">
+        If you have questions or you're ready to get started using the Check Investor Status
+        API and integration, email
+        {' '}
+        <a className="text-blue-800 hover:underline font-semibold" href="mailto:carter@checkinvestorstatus.com">
+          carter@checkinvestorstatus.com
+        </a>
+        .
+      </p>
+    </div>
+  )
+}
+
 function App() {
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
   const [businessType, setBusinessType] = useState('INDIVIDUAL')
   const [sponsor, setSponsor] = useState('')
+
   const [databaseUser, setDatabaseUser] = useState({})
+  const [ciInvestor, setCiInvestor] = useState({})
+  const [portalLink, setPortalLink] = useState('')
 
   const handleCreateUser = async (e) => {
     e.preventDefault();
@@ -104,91 +186,131 @@ function App() {
     }
   }
 
+  const handleFetchUser = async (e) => {
+    e.preventDefault();
+    // Hit the user creation endpoint in our web server.
+    let { investor, portalLink: newPortalLink } = await fetchCiInvestor(databaseUser._id.toString())
+    if (investor) {
+      setCiInvestor(investor)
+      setPortalLink(newPortalLink)
+    }
+  }
+  
+  const userCreationForm = (
+    <div className="w-3/4 mx-auto flex flex-row pb-10 gap-10 justify-between">
+      <div className="w-6/12 flex flex-col gap-4 border border-gray-500 p-10">
+        <strong className="text-xl underline font-semibold mx-auto pb-4">Create a Dummy User</strong>
+        <label className="flex-grow" htmlFor="email-in">
+          <p className="text-sm font-bold">Email:</p>
+          <input
+            className={`border border-gray-200 w-full px-1 mt-1`}
+            type="text"
+            id="email-in"
+            onChange={(e) => setEmail(e.target.value)}
+            value={email}
+          />
+        </label>
+        <label className="flex-grow" htmlFor="name-in">
+          <p className="text-sm font-bold">Name:</p>
+          <input
+            className={`border border-gray-200 w-full px-1 mt-1`}
+            type="text"
+            id="name-in"
+            onChange={(e) => setName(e.target.value)}
+            value={name}
+          />
+        </label>
+        <label className="flex-grow" htmlFor="sponsor-in">
+          <p className="text-sm font-bold">Sponsor Name:</p>
+          <input
+            className={`border border-gray-200 w-full px-1 mt-1`}
+            type="text"
+            id="sponsor-in"
+            onChange={(e) => setSponsor(e.target.value)}
+            value={sponsor}
+          />
+        </label>
+        <div className="flex-grow">
+          <p className="text-sm font-bold mb-1">Investor Type:</p>
+          <select
+            className="border mt-1 px-1 w-full"
+            id="business-type"
+            name="business-type"
+            onChange={(e) => setBusinessType(e.target.value)}
+          >
+              <option value="INDIVIDUAL" selected={businessType === 'INDIVIDUAL'}>
+                Investing as an individual
+              </option>
+              <option value="JOINT" selected={businessType === 'JOINT'}>
+                Investing as a spousal couple
+              </option>
+              <option value="ENTITY" selected={businessType === 'ENTITY'}>
+                Investing as a business entity
+              </option>
+              <option value="TRUST" selected={businessType === 'TRUST'}>
+                Investing as a trust
+              </option>
+          </select>
+        </div>
+        <div 
+          className="mx-auto mt-5 w-1/2 p-2 bg-indigo-600 hover:bg-indigo-800 text-white font-bold rounded-lg text-center"
+          role="button"
+          onKeyDown={() => {}}
+          tabIndex={0}
+          onClick={handleCreateUser}
+        >
+          Create Sample User
+        </div>
+      </div>
+      <div className="w-6/12 flex flex-col gap-4 border border-gray-500 p-10">
+        <strong className="text-xl underline font-semibold mx-auto pb-4">Your user (from the database):</strong>
+        <code className="bg-slate-200 whitespace-pre p-1">
+          { JSON.stringify(databaseUser || {}, null, 2)}
+        </code>
+      </div>
+    </div>
+  )
+
+  const userFetchingForm = (
+    <div className="w-3/4 mx-auto flex flex-row pb-10 gap-10 justify-between">
+      <div className="w-6/12 flex flex-col gap-4 border border-gray-500 p-10">
+        <strong className="text-xl underline font-semibold mx-auto pb-4">Check on your User&apos;s accreditation</strong>
+        <div 
+          className="mx-auto mt-5 w-1/2 p-2 bg-indigo-600 hover:bg-indigo-800 text-white font-bold rounded-lg text-center"
+          role="button"
+          onKeyDown={() => {}}
+          tabIndex={0}
+          onClick={handleFetchUser}
+        >
+          Fetch Investor Model
+        </div>
+      </div>
+      <div className="w-6/12 flex flex-col gap-4 border border-gray-500 p-10">
+        <strong className="text-xl underline font-semibold mx-auto pb-4">Your user's investor account (from Check Investor Status):</strong>
+        <code className="bg-slate-200 whitespace-pre p-1">
+          { JSON.stringify(ciInvestor || {}, null, 2)}
+        </code>
+      </div>
+    </div>
+  )
+
   return (
     <div className="w-full container-fluid">
       <Header />
       <Explanation />
       <StepOne />
-      <div className="w-3/4 mx-auto flex flex-row pb-10 gap-10 justify-between">
-        <div className="w-6/12 flex flex-col gap-4 border border-gray-500 p-10">
-          <strong className="text-xl underline font-semibold mx-auto pb-4">Create a Dummy User</strong>
-          <label className="flex-grow" htmlFor="email-in">
-            <p className="text-sm font-bold">Email:</p>
-            <input
-              className={`border border-gray-200 w-full px-1 mt-1`}
-              type="text"
-              id="email-in"
-              onChange={(e) => setEmail(e.target.value)}
-              value={email}
-            />
-          </label>
-          <label className="flex-grow" htmlFor="name-in">
-            <p className="text-sm font-bold">Name:</p>
-            <input
-              className={`border border-gray-200 w-full px-1 mt-1`}
-              type="text"
-              id="name-in"
-              onChange={(e) => setName(e.target.value)}
-              value={name}
-            />
-          </label>
-          <label className="flex-grow" htmlFor="sponsor-in">
-            <p className="text-sm font-bold">Sponsor Name:</p>
-            <input
-              className={`border border-gray-200 w-full px-1 mt-1`}
-              type="text"
-              id="sponsor-in"
-              onChange={(e) => setSponsor(e.target.value)}
-              value={sponsor}
-            />
-          </label>
-          <div className="flex-grow">
-            <p className="text-sm font-bold mb-1">Investor Type:</p>
-            <select
-              className="border mt-1 px-1 w-full"
-              id="business-type"
-              name="business-type"
-              onChange={(e) => setBusinessType(e.target.value)}
-            >
-                <option value="INDIVIDUAL" selected={businessType === 'INDIVIDUAL'}>
-                  Investing as an individual
-                </option>
-                <option value="JOINT" selected={businessType === 'JOINT'}>
-                  Investing as a spousal couple
-                </option>
-                <option value="ENTITY" selected={businessType === 'ENTITY'}>
-                  Investing as a business entity
-                </option>
-                <option value="TRUST" selected={businessType === 'TRUST'}>
-                  Investing as a trust
-                </option>
-            </select>
-          </div>
-          <div 
-            className="mx-auto mt-5 w-1/2 p-2 bg-indigo-600 hover:bg-indigo-800 text-white font-bold rounded-lg text-center"
-            role="button"
-            onKeyDown={() => {}}
-            tabIndex={0}
-            onClick={handleCreateUser}
-          >
-            Create Sample User
-          </div>
-        </div>
-        <div className="w-6/12 flex flex-col gap-4 border border-gray-500 p-10">
-          <strong className="text-xl underline font-semibold mx-auto pb-4">Your user (from the database):</strong>
-          <code className="bg-slate-200 whitespace-pre p-1">
-            { JSON.stringify(databaseUser || {}, null, 2)}
-          </code>
-        </div>
-      </div>
+      { userCreationForm }
       { (databaseUser && databaseUser._id) && <StepTwo /> }
       { (databaseUser && databaseUser._id) && (
         <div className="w-3/4 mx-auto my-10">
           <BrowserFrame url="https://myinvestmentplatform.com">
-            <MyInvestmentPlatformPage userId={databaseUser._id} /> 
+            <MyInvestmentPlatformPage userId={databaseUser._id} portalLink={portalLink} /> 
           </BrowserFrame>
         </div>
       )}
+      { (databaseUser && databaseUser._id) && <StepThree /> }
+      { (databaseUser && databaseUser._id) && userFetchingForm }
+      { (databaseUser && databaseUser._id) && <WhatsNext /> }
     </div>
   );
 }
