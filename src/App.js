@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import BrowserFrame from "react-browser-frame";
+
+import MyInvestmentPlatformPage from './MyInvestmentPlatformPage';
+
 
 import {
   createUser,
@@ -56,11 +60,11 @@ function StepTwo() {
   return (
     <div className="w-3/4 mx-auto flex flex-col gap-4">
       <strong className="text-2xl font-semibold">
-        Step 2: Check out your User's view
+        Step 2: What your User Sees
       </strong>
       <p className="text-md">
         Below, you can see what your newly-minted user would see if 
-        they logged in to MyInvestmentPlatform.
+        they logged in to MyInvestmentPlatform.com.
       </p>
       <p className="text-md">
         Notice the
@@ -79,39 +83,6 @@ function StepTwo() {
   )
 }
 
-function UserFacingComponent(props) {
-  let {
-    userId
-  } = props
-
-  const [portalLink, setPortalLink] = useState('');
-
-  // Fetch the Portal Link from the API
-  useEffect(() => {
-    async function getPortalFromAPI() {
-      const { 
-        portalLink: newPortalLink, 
-      } = await fetchPortalLink(userId);
-    
-      if (newPortalLink) {
-        setPortalLink(newPortalLink);
-      }
-    }
-    getPortalFromAPI();
-  }, [userId]);
-
-  // Render the User's MyInvestmentPlatform Page
-  return (
-    <a
-      href={portalLink}
-      target="_blank"
-      className='link' rel="noreferrer"
-    >
-      Accreditation Portal
-    </a>
-  )
-}
-
 function App() {
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
@@ -122,7 +93,7 @@ function App() {
   const handleCreateUser = async (e) => {
     e.preventDefault();
     // Enforce email and name entry
-    if (!(email && name && businessType)) {
+    if (!(email && name && businessType && sponsor)) {
       return
     }
 
@@ -162,7 +133,7 @@ function App() {
             />
           </label>
           <label className="flex-grow" htmlFor="sponsor-in">
-            <p className="text-sm font-bold">Sponsor (Optional):</p>
+            <p className="text-sm font-bold">Sponsor Name:</p>
             <input
               className={`border border-gray-200 w-full px-1 mt-1`}
               type="text"
@@ -211,7 +182,13 @@ function App() {
         </div>
       </div>
       { (databaseUser && databaseUser._id) && <StepTwo /> }
-      { (databaseUser && databaseUser._id) && <UserFacingComponent userId={databaseUser._id} /> }
+      { (databaseUser && databaseUser._id) && (
+        <div className="w-3/4 mx-auto my-10">
+          <BrowserFrame url="https://myinvestmentplatform.com">
+            <MyInvestmentPlatformPage userId={databaseUser._id} /> 
+          </BrowserFrame>
+        </div>
+      )}
     </div>
   );
 }
