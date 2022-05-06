@@ -3,6 +3,8 @@ import BrowserFrame from "react-browser-frame";
 
 import MyInvestmentPlatformPage from './MyInvestmentPlatformPage';
 
+import validator from 'validator';
+
 
 import {
   createUser,
@@ -175,6 +177,7 @@ function WhatsNext() {
 }
 
 function App() {
+  const [error, setError] = useState('')
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
   const [businessType, setBusinessType] = useState('INDIVIDUAL')
@@ -189,6 +192,13 @@ function App() {
     // Enforce email and name entry
     if (!(email && name && businessType && sponsor)) {
       return
+    }
+
+    if (!validator.isEmail(email)) {
+      setError('Please enter a valid email address')
+      return
+    } else {
+      setError('')
     }
 
     // Hit the user creation endpoint in our web server.
@@ -212,6 +222,7 @@ function App() {
     <div className="w-3/4 mx-auto flex flex-row pb-10 gap-10 justify-between">
       <div className="w-6/12 flex flex-col gap-4 border border-gray-500 p-10">
         <strong className="text-xl underline font-semibold mx-auto pb-4">Create a Dummy User</strong>
+        { error && <p className="text-sm text-red-600 pb-4 mx-auto">{error}</p> }
         <label className="flex-grow" htmlFor="email-in">
           <p className="text-sm font-bold">Email:</p>
           <input
@@ -309,6 +320,7 @@ function App() {
   return (
     <div className="w-full container-fluid">
       <Header />
+      <h1 className="text-3xl font-bold mx-auto text-center pt-16">Check Investor Status – Integration and API Demo</h1>
       <Explanation />
       <StepOne />
       { userCreationForm }
